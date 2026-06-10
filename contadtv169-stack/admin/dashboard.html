@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SuperNet — Dashboard</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <nav class="sidebar">
+    <h2>SuperNet</h2>
+    <ul>
+      <li><a href="#" class="active" data-page="dashboard">Dashboard</a></li>
+      <li><a href="#" data-page="clientes">Clientes</a></li>
+      <li><a href="#" data-page="pagamentos">Pagamentos</a></li>
+      <li><a href="#" data-page="saques">Saques</a></li>
+      <li><a href="#" data-page="logs">Logs</a></li>
+      <li><a href="#" data-page="config">Configuracoes</a></li>
+      <li><a href="login.html" id="logout">Sair</a></li>
+    </ul>
+  </nav>
+  <main class="content">
+    <header><h1 id="pageTitle">Dashboard</h1></header>
+    <div id="pageContent">
+      <div class="widgets">
+        <div class="widget"><h3>Clientes Ativos</h3><p id="clientesAtivos">0</p></div>
+        <div class="widget"><h3>Vendas Hoje</h3><p id="vendasHoje">R$ 0,00</p></div>
+        <div class="widget"><h3>Faturamento Mensal</h3><p id="faturamentoMensal">R$ 0,00</p></div>
+        <div class="widget"><h3>Saldo Krypt</h3><p id="saldoKrypt">R$ 0,00</p></div>
+      </div>
+      <div id="tablesContainer"></div>
+    </div>
+  </main>
+  <script src="assets/admin.js"></script>
+</body>
+</html>
