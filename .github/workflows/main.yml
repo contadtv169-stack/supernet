@@ -1,0 +1,365 @@
+# ===========================================================================
+# SUPERNET — INTERNET R$19,90
+# Stack: contadtv169-stack
+# GitHub: KURONUZX
+# Gateway: Krypt (credenciais reais)
+# DPI Bypass: Código real integrado
+# Versao: 6.0.0 — REAL (sem simulacao)
+# ===========================================================================
+
+supernet:
+  name: "SuperNet"
+  version: "6.0.0"
+  stack: "contadtv169-stack"
+  description: "Provedor de internet automatizado — Servico real"
+  environment: "REAL"
+
+  # =========================================================================
+  # 1. GITHUB — PAINEL ADMIN FRONTEND (GitHub Pages)
+  # =========================================================================
+  github:
+    owner: "KURONUZX"
+    repo: "supernet"
+    branch: "main"
+    ips_fixos:
+      - "185.199.108.153"
+      - "185.199.109.153"
+      - "185.199.110.153"
+      - "185.199.111.153"
+    urls:
+      repositorio:  "https://github.com/KURONUZX/supernet"
+      app:          "https://KURONUZX.github.io/supernet"
+      admin:        "https://KURONUZX.github.io/supernet/admin"
+      login:        "https://KURONUZX.github.io/supernet/admin/login.html"
+      dashboard:    "https://KURONUZX.github.io/supernet/admin/dashboard.html"
+      download_apk: "https://KURONUZX.github.io/supernet/download/supernet.apk"
+    admin_panel:
+      ativo: true
+      login:
+        username: "admin"
+        password: "Kuronu@SuperNet2026!"
+      modulos:
+        dashboard:
+          widgets:
+            - "Clientes ativos"
+            - "Vendas hoje (R$)"
+            - "Faturamento mensal"
+            - "Saldo Krypt"
+            - "Ultimas transacoes"
+        clientes:
+          colunas: ["ID", "Nome", "Discord", "Plano", "Status", "Expira", "Acoes"]
+          acoes: ["Ver", "Bloquear", "Desbloquear", "Renovar", "Excluir"]
+        planos:
+          basico:
+            nome: "Basico"
+            preco: 19.90
+            velocidade: "10 Mbps"
+            dias: 30
+          premium:
+            nome: "Premium"
+            preco: 39.90
+            velocidade: "25 Mbps"
+            dias: 30
+        pagamentos:
+          colunas: ["ID Tx", "Cliente", "Valor", "Metodo", "Status", "Data"]
+          acoes: ["Confirmar", "Estornar"]
+        saques:
+          metodos:
+            - "PIX (CPF/CNPJ/EMAIL/PHONE)"
+            - "USDT TRC20"
+        logs:
+          eventos: ["Login", "Venda", "Saque", "Bloqueio", "Erro Gateway"]
+        configuracoes:
+          secoes:
+            - "Gateway Krypt (CI/CS)"
+            - "Discord Bot (Token/Guild)"
+            - "Servidor (IP/Portas)"
+            - "Limites de banda"
+            - "DPI Bypass"
+            - "Webhooks"
+
+  # =========================================================================
+  # 2. SERVIDOR REAL (VPS) — BACKEND + PROXY + VPN
+  # =========================================================================
+  server:
+    provider: "Hetzner / DigitalOcean / AWS"
+    hostname: "supernet-server"
+    os: "Ubuntu 22.04 LTS"
+    stack: "contadtv169-stack"
+    ssh:
+      ip: "162.120.186.147"
+      port: 22
+      user: "root"
+      password: "Kuronu@VPS2026!"
+      key: "~/.ssh/supernet_rsa"
+    domain: "api.contadtv169-stack.com"
+    ipv6: "2001:4860:7:f03::97"
+    firewall:
+      ufw_rules:
+        - port: 22
+          proto: tcp
+          source: "162.120.186.147/32"
+        - port: 80
+          proto: tcp
+          source: "any"
+        - port: 443
+          proto: tcp
+          source: "any"
+        - port: 8080
+          proto: tcp
+          source: "any"
+        - port: 51820
+          proto: udp
+          source: "any"
+    bandwidth:
+      interface: "eth0"
+      planos:
+        basico:
+          download: "10mbit"
+          upload: "2mbit"
+          burst: "15mbit"
+        premium:
+          download: "25mbit"
+          upload: "5mbit"
+          burst: "35mbit"
+        expirado:
+          download: "128kbit"
+          upload: "64kbit"
+          burst: "256kbit"
+
+  # =========================================================================
+  # 3. KRYPT GATEWAY — CREDENCIAIS REAIS
+  # =========================================================================
+  gateway:
+    provider: "Krypt Gateway"
+    base_url: "https://kryptgateway.netlify.app/api"
+    credentials:
+      ci: "krypt_ci_49e0355123ad4d54fa"
+      cs: "krypt_cs_952dfe7561989e86e889204c1f1ab313"
+    endpoints:
+      pix:
+        url: "https://kryptgateway.netlify.app/api/gateway/pix-create"
+        method: POST
+        headers:
+          Content-Type: "application/json"
+          ci: "krypt_ci_49e0355123ad4d54fa"
+          cs: "krypt_cs_952dfe7561989e86e889204c1f1ab313"
+      crypto:
+        url: "https://kryptgateway.netlify.app/api/gateway/crypto-create"
+        method: POST
+        headers:
+          Content-Type: "application/json"
+          ci: "krypt_ci_49e0355123ad4d54fa"
+          cs: "krypt_cs_952dfe7561989e86e889204c1f1ab313"
+      cashout:
+        url: "https://kryptgateway.netlify.app/api/merchant/cashout"
+        method: POST
+        headers:
+          Content-Type: "application/json"
+          ci: "krypt_ci_49e0355123ad4d54fa"
+          cs: "krypt_cs_952dfe7561989e86e889204c1f1ab313"
+    body_exemplos:
+      pix_basico:
+        amount: 19.90
+        payerName: "Cliente SuperNet"
+        payerDocument: "12345678909"
+        description: "Plano Basico SuperNet - contadtv169"
+      pix_premium:
+        amount: 39.90
+        payerName: "Cliente SuperNet"
+        payerDocument: "12345678909"
+        description: "Plano Premium SuperNet - contadtv169"
+      pix_renovacao:
+        amount: 19.90
+        payerName: "Cliente SuperNet"
+        payerDocument: "12345678909"
+        description: "Renovacao SuperNet - contadtv169"
+      crypto_basico:
+        amount: 19.90
+        network: "TRC20"
+        description: "Plano Basico SuperNet - USDT"
+      crypto_premium:
+        amount: 39.90
+        network: "TRC20"
+        description: "Plano Premium SuperNet - USDT"
+      cashout_pix:
+        withdrawalMethod: "PIX"
+        amount: 100.00
+        pixKey: "11999999999"
+        pixKeyType: "PHONE"
+        beneficiaryName: "Admin SuperNet"
+        beneficiaryDocument: "12345678909"
+        description: "Saque SuperNet"
+      cashout_crypto:
+        withdrawalMethod: "CRYPTO"
+        amount: 100.00
+        wallet: "0xSeuEnderecoAqui"
+        description: "Saque SuperNet"
+
+  # =========================================================================
+  # 4. DISCORD BOT — VENDAS AUTOMATICAS
+  # =========================================================================
+  discord_bot:
+    ativo: true
+    nome: "SuperNet Bot"
+    credentials:
+      token: "MTUxNDI3NTU4Mjc0NDE5OTM4OA.GwmhpG.c4NXR-Y-98BY1Ez2bWBsyQCpQ0wkpSlFOqs-3g"
+      guild_id: "1514275582744199388"
+    canais:
+      loja: "loja-supernet"
+      pedidos: "pedidos"
+      pagamentos: "pagamentos"
+      entregas: "credenciais"
+      admin: "admin"
+      logs: "logs"
+    planos:
+      basico:
+        name: "Plano Basico"
+        price: 19.90
+        speed: "10 Mbps"
+        days: 30
+        role: "Cliente SuperNet"
+      premium:
+        name: "Plano Premium"
+        price: 39.90
+        speed: "25 Mbps"
+        days: 30
+        role: "Cliente Premium"
+    comandos:
+      publicos:
+        - "/comprar [basico|premium]"
+        - "/pix"
+        - "/crypto"
+        - "/status [id]"
+        - "/renovar"
+        - "/senha"
+        - "/ajuda"
+      admin:
+        - "/admin saque [valor] [pix|trc20] [dados]"
+        - "/admin relatorio"
+        - "/admin bloquear [id]"
+        - "/admin desbloquear [id]"
+
+  # =========================================================================
+  # 5. DPI BYPASS PROXY
+  # =========================================================================
+  dpi_bypass:
+    ativo: true
+    codigo: "dpi_bypass_proxy.py"
+    host: "0.0.0.0"
+    porta: 8080
+    dominios_alvo:
+      - "youtube.com"
+      - "googlevideo.com"
+      - "ytimg.com"
+      - "whatsapp.com"
+      - "whatsapp.net"
+      - "netflix.com"
+      - "nflxvideo.net"
+      - "spotify.com"
+      - "twitch.tv"
+      - "instagram.com"
+      - "tiktok.com"
+      - "facebook.com"
+    tecnicas:
+      - "Fragmentacao TCP (128 bytes)"
+      - "Manipulacao de headers HTTP"
+      - "Fragmentacao TLS ClientHello"
+      - "DNS publico (8.8.8.8, 1.1.1.1, 9.9.9.9)"
+    service_systemd:
+      nome: "supernet-dpi"
+      conteudo: |
+        [Unit]
+        Description=SuperNet DPI Bypass Proxy
+        After=network.target
+
+        [Service]
+        Type=simple
+        ExecStart=/usr/bin/python3 /opt/supernet/dpi/dpi_bypass_proxy.py
+        Restart=always
+        RestartSec=5
+        User=root
+
+        [Install]
+        WantedBy=multi-user.target
+
+  # =========================================================================
+  # 6. LINKS REAIS DO SISTEMA
+  # =========================================================================
+  urls:
+    app:          "https://KURONUZX.github.io/supernet"
+    admin:        "https://KURONUZX.github.io/supernet/admin"
+    vps:          "162.120.186.147"
+    api:          "https://api.contadtv169-stack.com"
+    proxy_dpi:    "162.120.186.147:8080"
+    wireguard:    "162.120.186.147:51820"
+    krypt_pix:    "https://kryptgateway.netlify.app/api/gateway/pix-create"
+    krypt_crypto: "https://kryptgateway.netlify.app/api/gateway/crypto-create"
+    krypt_cashout: "https://kryptgateway.netlify.app/api/merchant/cashout"
+    repositorio:  "https://github.com/KURONUZX/supernet"
+    discord:      "https://discord.gg/SEU_CONVITE"
+
+  # =========================================================================
+  # 7. TESTES REAIS DO GATEWAY
+  # =========================================================================
+  testes:
+    pix:
+      comando: >
+        curl -X POST https://kryptgateway.netlify.app/api/gateway/pix-create
+        -H "Content-Type: application/json"
+        -H "ci: krypt_ci_49e0355123ad4d54fa"
+        -H "cs: krypt_cs_952dfe7561989e86e889204c1f1ab313"
+        -d '{"amount": 19.90, "payerName": "Cliente SuperNet", "payerDocument": "12345678909", "description": "Plano Basico SuperNet - contadtv169"}'
+    crypto:
+      comando: >
+        curl -X POST https://kryptgateway.netlify.app/api/gateway/crypto-create
+        -H "Content-Type: application/json"
+        -H "ci: krypt_ci_49e0355123ad4d54fa"
+        -H "cs: krypt_cs_952dfe7561989e86e889204c1f1ab313"
+        -d '{"amount": 19.90, "network": "TRC20", "description": "Plano Basico SuperNet - USDT"}'
+    cashout:
+      comando: >
+        curl -X POST https://kryptgateway.netlify.app/api/merchant/cashout
+        -H "Content-Type: application/json"
+        -H "ci: krypt_ci_49e0355123ad4d54fa"
+        -H "cs: krypt_cs_952dfe7561989e86e889204c1f1ab313"
+        -d '{"withdrawalMethod": "CRYPTO", "amount": 100.00, "wallet": "0x0000000000000000000000000000000000000000", "description": "Saque SuperNet"}'
+
+  # =========================================================================
+  # 8. SETUP — RODE NO VPS
+  # =========================================================================
+  setup:
+    ssh: "ssh root@162.120.186.147"
+    dependencias: |
+      apt update && apt upgrade -y
+      apt install -y curl wget git python3 python3-pip python3-venv nodejs npm nginx wireguard ufw iptables-persistent
+      pip3 install pyOpenSSL
+    estrutura: |
+      mkdir -p /opt/supernet/{bot,api,dpi,scripts,clientes}
+      mkdir -p /var/www/supernet
+    env_bot: |
+      DISCORD_TOKEN=MTUxNDI3NTU4Mjc0NDE5OTM4OA.GwmhpG.c4NXR-Y-98BY1Ez2bWBsyQCpQ0wkpSlFOqs-3g
+      GUILD_ID=1514275582744199388
+      KRYPT_CI=krypt_ci_49e0355123ad4d54fa
+      KRYPT_CS=krypt_cs_952dfe7561989e86e889204c1f1ab313
+      KRYPT_PIX=https://kryptgateway.netlify.app/api/gateway/pix-create
+      KRYPT_CRYPTO=https://kryptgateway.netlify.app/api/gateway/crypto-create
+      KRYPT_CASHOUT=https://kryptgateway.netlify.app/api/merchant/cashout
+      SERVER_IP=162.120.186.147
+      PROXY_PORT=8080
+      WG_PORT=51820
+      DNS_1=1.1.1.1
+      DNS_2=8.8.8.8
+    servicos: |
+      systemctl daemon-reload
+      systemctl enable --now supernet-dpi
+      systemctl status supernet-dpi
+    firewall: |
+      ufw default deny incoming
+      ufw default allow outgoing
+      ufw allow from 162.120.186.147/32 to any port 22
+      ufw allow 80/tcp
+      ufw allow 443/tcp
+      ufw allow 8080/tcp
+      ufw allow 51820/udp
+      ufw --force enable
