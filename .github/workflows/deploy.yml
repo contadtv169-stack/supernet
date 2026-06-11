@@ -33,15 +33,16 @@ jobs:
 
   server:
     runs-on: ubuntu-latest
-    if: ${{ vars.VPS_ENABLED == 'true' }}
     needs: frontend
+    continue-on-error: true
     steps:
       - uses: actions/checkout@v4
       - name: Deploy to VPS
+        continue-on-error: true
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: ${{ vars.VPS_HOST }}
-          username: ${{ vars.VPS_USER }}
+          host: ${{ vars.VPS_HOST || '162.120.186.147' }}
+          username: ${{ vars.VPS_USER || 'root' }}
           password: ${{ secrets.VPS_PASSWORD }}
           port: ${{ vars.VPS_PORT || '22' }}
           script: |
