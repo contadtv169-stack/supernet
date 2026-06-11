@@ -1,0 +1,72 @@
+supernet:
+  name: "SuperNet"
+  version: "6.0.0"
+  stack: "contadtv169-stack"
+  environment: "REAL"
+
+  github:
+    owner: "contadtv169-stack"
+    repo: "supernet"
+    branch: "master"
+    urls:
+      app: "https://contadtv169-stack.github.io/supernet"
+      admin: "https://contadtv169-stack.github.io/supernet/admin"
+      login: "https://contadtv169-stack.github.io/supernet/admin/login.html"
+      dashboard: "https://contadtv169-stack.github.io/supernet/admin/dashboard.html"
+
+  server:
+    ip: "162.120.186.147"
+    ipv6: "2001:4860:7:f03::97"
+    hostname: "supernet-server"
+    os: "Ubuntu 22.04 LTS"
+    ssh:
+      user: "root"
+      port: 22
+      password: "Kuronu@VPS2026!"
+    wireguard:
+      port: 51820
+      network: "10.0.0.0/24"
+      dns: ["1.1.1.1", "8.8.8.8"]
+    proxy_dpi:
+      port: 8080
+      fragment_size: 128
+    firewall:
+      ports: [22, 80, 443, 8080, 51820]
+
+  gateway:
+    provider: "Krypt Gateway"
+    base_url: "https://kryptgateway.netlify.app/api"
+    credentials:
+      ci: "krypt_ci_49e0355123ad4d54fa"
+      cs: "krypt_cs_952dfe7561989e86e889204c1f1ab313"
+    endpoints:
+      pix: "https://kryptgateway.netlify.app/api/gateway/pix-create"
+      crypto: "https://kryptgateway.netlify.app/api/gateway/crypto-create"
+      cashout: "https://kryptgateway.netlify.app/api/merchant/cashout"
+
+  discord:
+    token: "MTUxNDI3NTU4Mjc0NDE5OTM4OA.GwmhpG.c4NXR-Y-98BY1Ez2bWBsyQCpQ0wkpSlFOqs-3g"
+    guild_id: "1514275582744199388"
+    comandos:
+      publicos:
+        - "/comprar [basico|premium]"
+        - "/pix"
+        - "/crypto"
+        - "/confirmar [id]"
+        - "/credenciais"
+        - "/status [id]"
+        - "/renovar"
+        - "/senha"
+        - "/ajuda"
+
+  planos:
+    basico:
+      nome: "Basico"
+      preco: 19.90
+      velocidade: "10 Mbps"
+      dias: 30
+    premium:
+      nome: "Premium"
+      preco: 39.90
+      velocidade: "25 Mbps"
+      dias: 30

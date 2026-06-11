@@ -1,0 +1,59 @@
+name: Deploy SuperNet
+
+on:
+  push:
+    branches: [master]
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: "."
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
+  server:
+    runs-on: ubuntu-latest
+    if: ${{ vars.VPS_ENABLED == 'true' }}
+    needs: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ vars.VPS_HOST }}
+          username: ${{ vars.VPS_USER }}
+          password: ${{ secrets.VPS_PASSWORD }}
+          port: ${{ vars.VPS_PORT || '22' }}
+          script: |
+            set -e
+            cd /opt/supernet
+            git pull origin master
+            pip3 install -r api/requirements.txt 2>/dev/null || true
+            chmod +x scripts/*.sh
+            systemctl restart supernet-api 2>/dev/null || true
+            systemctl restart supernet-bot 2>/dev/null || true
+            systemctl restart supernet-dpi 2>/dev/null || true
+            echo "Deploy concluido em $(date)"
